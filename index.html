@@ -11,12 +11,34 @@
         <!-- Definindo a câmera GPS -->
         <a-camera gps-new-camera="gpsMinDistance: 5"></a-camera>
         
-        <!-- Exibindo o vídeo no local específico -->
-        <a-video 
-            src="https://videos.pexels.com/video-files/29960560/12856805_1920_1080_60fps.mp4" 
-            gps-new-entity-place="latitude: -27.580998625584833; longitude: -48.585178167879285" 
-            scale="4 4 4">
-        </a-video>
+        <!-- Vídeo a ser exibido na posição específica -->
+        <a-video id="ar-video" scale="10 10 10"></a-video>
     </a-scene>
+
+    <script>
+    // Função para carregar vídeo e coordenadas da API
+    function loadARContent() {
+        fetch('https://script.googleusercontent.com/macros/echo?user_content_key=QLL6Sv8oRYCdSZgmOKel48aRRT7TiW7Cgi3xHcAdLBMk6nDNzelGXF5TcTO-0T2jgroIoftO3GmJ7hDNGWncVpWHkNwLfAbBm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnKoVqdjaSgeyUVK_txwvO81hTz5Yclflorr6mHNYaCj0lDH8dmcqGws0wRDQ92V50M1ybPewonLWnkux9urgwWfhPK-bSAa3FQ&lib=MwAEb6bGCelVI-xeXI9c9j1yzx1Bqeb0r')  // Sua URL de API
+            .then(response => response.json())
+            .then(data => {
+                // Aqui pegamos o primeiro item (você pode iterar se houver mais de um)
+                const videoUrl = data[0].video_url;
+                const latitude = data[0].latitude;
+                const longitude = data[0].longitude;
+
+                // Atualizar o componente de vídeo com os dados da API
+                const videoElement = document.getElementById('ar-video');
+                videoElement.setAttribute('src', videoUrl);
+                videoElement.setAttribute('gps-new-entity-place', `latitude: ${latitude}; longitude: ${longitude}`);
+            })
+            .catch(error => {
+                console.error('Erro ao carregar dados da API:', error);
+            });
+    }
+
+    // Carregar conteúdo AR assim que a página carregar
+    window.onload = loadARContent;
+</script>
+
 </body>
 </html>
